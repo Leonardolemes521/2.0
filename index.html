@@ -1,99 +1,417 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Planilha de Custos</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        header {
-            background-color: #4CAF50;
-            color: white;
-            text-align: center;
-            padding: 20px;
-        }
-        .content {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            height: 60vh;
-            margin-top: 20px;
-        }
-        .button {
-            background-color: #008CBA;
-            color: white;
-            padding: 15px 32px;
-            text-align: center;
-            font-size: 18px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            text-decoration: none;
-            transition: background-color 0.3s ease;
-        }
-        .button:hover {
-            background-color: #005f73;
-        }
-        .emoji-section {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .emoji-section p {
-            font-size: 32px;
-            margin: 5px 0;
-        }
-        footer {
-            background-color: #333;
-            color: white;
-            text-align: center;
-            padding: 10px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
+            margin: 20px;
         }
 
-        /* Estilos Responsivos */
+        h1 {
+            text-align: center;
+        }
+
+        .menu {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .menu button {
+            padding: 10px 20px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        .menu button:hover {
+            opacity: 0.8;
+        }
+
+        .btn-green {
+            background-color: #4CAF50;
+        }
+
+        .btn-blue {
+            background-color: #2196F3;
+        }
+
+        .btn-orange {
+            background-color: #FF9800;
+        }
+
+        .btn-red {
+            background-color: #FF5722;
+        }
+
+        .btn-purple {
+            background-color: #9C27B0;
+        }
+
+        .btn-pink {
+            background-color: #E91E63;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 6px;
+            text-align: center;
+        }
+
+        th {
+            font-size: 14px;
+        }
+
+        td input {
+            width: 100%;
+            font-size: 14px;
+            text-align: center;
+            border: none;
+            outline: none;
+        }
+
+        button {
+            padding: 5px 10px;
+            background-color: #ff6666;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #ff3333;
+        }
+
+        button#adicionar-linha {
+            margin-top: 10px;
+            background-color: #66cc66;
+        }
+
+        button#adicionar-linha:hover {
+            background-color: #33aa33;
+        }
+
+        .graficos {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+            align-items: center;
+        }
+
+        .grafico-container {
+            text-align: center;
+            max-width: 120px;
+        }
+
+        canvas {
+            width: 90px !important;
+            height: 90px !important;
+            margin: 0 auto;
+        }
+
+        .grafico-valor {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #333;
+            font-weight: bold;
+        }
+
         @media (max-width: 600px) {
-            header h1 {
-                font-size: 24px;
+            table, .graficos {
+                width: 100%;
             }
-            .button {
-                padding: 12px 24px;
-                font-size: 16px;
+
+            .grafico-container {
+                max-width: 100px;
+                margin-bottom: 10px;
             }
-            .emoji-section p {
-                font-size: 28px;
+
+            .grafico-valor {
+                font-size: 10px;
+            }
+
+            td input {
+                font-size: 12px;
+            }
+
+            button {
+                padding: 4px 8px;
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 4px;
+                font-size: 12px;
             }
         }
     </style>
 </head>
 <body>
+    <h1>Planilha de Custos</h1>
 
-<header>
-    <h1>Bem-vindo à Planilha de Custos</h1>
-    <p>Gerencie seus gastos com facilidade.</p>
-</header>
+    <div class="menu">
+        <button id="nova-planilha" class="btn-blue">Criar Nova Planilha</button>
+        <button id="carregar-planilha" class="btn-orange">Carregar Planilha</button>
+        <button id="salvar-planilha" class="btn-green">Salvar Planilha</button>
+    </div>
 
-<div class="content">
-    <p>Para acessar sua planilha de custos, clique no botão abaixo:</p>
-    <a href="https://leonardolemes521.github.io/lemes/" class="button" target="_blank">Abrir Planilha</a>
-</div>
+    <label for="valor-total">Valor Total Disponível: R$</label>
+    <input type="text" id="valor-total" placeholder="Digite o valor total" />
 
-<div class="emoji-section">
-    <p>💰📊💵</p>
-    <p>Gerencie suas finanças com praticidade! 🔥💸</p>
-</div>
+    <div class="graficos">
+        <div class="grafico-container">
+            <h3>Valor Total</h3>
+            <canvas id="grafico-total"></canvas>
+            <div id="valor-total-display" class="grafico-valor">R$ 0,00</div>
+        </div>
+        <div class="grafico-container">
+            <h3>Gastos</h3>
+            <canvas id="grafico-gasto"></canvas>
+            <div id="gastos-display" class="grafico-valor">R$ 0,00</div>
+        </div>
+        <div class="grafico-container">
+            <h3>Disponível</h3>
+            <canvas id="grafico-disponivel"></canvas>
+            <div id="saldo-disponivel-display" class="grafico-valor">R$ 0,00</div>
+        </div>
+    </div>
 
-<footer>
-    <p>&copy; 2025 Planilha de Custos - Todos os direitos reservados</p>
-</footer>
+    <table id="planilha">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Quantidade</th>
+                <th>Preço Unitário (R$)</th>
+                <th>Total (R$)</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Linhas da planilha vão ser inseridas aqui -->
+        </tbody>
+    </table>
 
+    <button id="adicionar-linha" class="btn-green">Adicionar Linha</button>
+
+    <input type="file" id="file-input" style="display: none" />
+    <input type="file" id="file-input-save" style="display: none" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const tabela = document.getElementById("planilha").querySelector("tbody");
+            const valorTotalDisplay = document.getElementById("valor-total-display");
+            const saldoDisponivelDisplay = document.getElementById("saldo-disponivel-display");
+            const gastosDisplay = document.getElementById("gastos-display");
+
+            const graficoTotal = document.getElementById("grafico-total");
+            const graficoGasto = document.getElementById("grafico-gasto");
+            const graficoDisponivel = document.getElementById("grafico-disponivel");
+
+            const fileInput = document.getElementById("file-input");
+            const fileInputSave = document.getElementById("file-input-save");
+
+            const criarGrafico = (ctx, dados, cores) => {
+                return new Chart(ctx, {
+                    type: "doughnut",
+                    data: {
+                        labels: ["Disponível", "Gasto"],
+                        datasets: [{
+                            data: dados,
+                            backgroundColor: cores,
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                enabled: false
+                            }
+                        },
+                        cutout: "75%",
+                        responsive: false
+                    }
+                });
+            };
+
+            let chartTotal = criarGrafico(
+                graficoTotal.getContext("2d"),
+                [100],
+                ["green"]
+            );
+
+            let chartGasto = criarGrafico(
+                graficoGasto.getContext("2d"),
+                [0, 100],
+                ["red", "green"]
+            );
+
+            let chartDisponivel = criarGrafico(
+                graficoDisponivel.getContext("2d"),
+                [100],
+                ["yellow"]
+            );
+
+            const formatarValor = (valor) => {
+                return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            };
+
+            const salvarDados = (dados, nome) => {
+                const blob = new Blob([JSON.stringify(dados)], { type: 'application/json' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = nome + ".json"; // Salva como JSON
+                link.click();
+            };
+
+            const carregarDados = (arquivo) => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const dados = JSON.parse(event.target.result);
+                    tabela.innerHTML = "";  // Limpa a tabela antes de carregar
+                    dados.planilha.forEach(dado => {
+                        const novaLinha = document.createElement("tr");
+                        novaLinha.innerHTML = `
+                            <td><input type="text" value="${dado.descricao}" /></td>
+                            <td><input type="number" value="${dado.quantidade}" /></td>
+                            <td><input type="number" value="${dado.preco}" /></td>
+                            <td class="total">${formatarValor(dado.total)}</td>
+                            <td><button class="excluir-linha">Excluir</button></td>
+                        `;
+                        tabela.appendChild(novaLinha);
+                    });
+                    document.getElementById("valor-total").value = dados.valorTotal;
+                    atualizarGraficos();
+                };
+                reader.readAsText(arquivo);
+            };
+
+            document.getElementById("nova-planilha").addEventListener("click", () => {
+                tabela.innerHTML = "";  // Limpa a tabela para uma nova planilha
+                document.getElementById("valor-total").value = "";
+                atualizarGraficos();
+            });
+
+            document.getElementById("carregar-planilha").addEventListener("click", () => {
+                fileInput.click(); // Abre o seletor de arquivos
+            });
+
+            fileInput.addEventListener('change', (event) => {
+                if (event.target.files.length > 0) {
+                    carregarDados(event.target.files[0]);
+                }
+            });
+
+            document.getElementById("salvar-planilha").addEventListener("click", () => {
+                const nomePlanilha = prompt("Digite o nome para salvar a planilha:");
+                if (nomePlanilha) {
+                    const linhas = [];
+                    tabela.querySelectorAll("tr").forEach(row => {
+                        const cells = row.querySelectorAll("td");
+                        const descricao = cells[0].querySelector("input").value;
+                        const quantidade = cells[1].querySelector("input").value;
+                        const preco = cells[2].querySelector("input").value;
+                        const total = quantidade * preco;
+
+                        linhas.push({ descricao, quantidade, preco, total });
+                    });
+
+                    const valorTotal = document.getElementById("valor-total").value;
+                    const dados = { planilha: linhas, valorTotal };
+                    salvarDados(dados, nomePlanilha);
+                } else {
+                    alert("O nome da planilha não pode estar vazio.");
+                }
+            });
+
+            tabela.addEventListener("input", () => {
+                atualizarGraficos();
+            });
+
+            tabela.addEventListener("click", (e) => {
+                if (e.target.classList.contains("excluir-linha")) {
+                    e.target.closest("tr").remove();
+                    atualizarGraficos();
+                }
+            });
+
+            document.getElementById("adicionar-linha").addEventListener("click", () => {
+                const novaLinha = document.createElement("tr");
+                novaLinha.innerHTML = `
+                    <td><input type="text" /></td>
+                    <td><input type="number" value="0" /></td>
+                    <td><input type="number" value="0" /></td>
+                    <td class="total">R$ 0,00</td>
+                    <td><button class="excluir-linha">Excluir</button></td>
+                `;
+                tabela.appendChild(novaLinha);
+                atualizarGraficos();
+            });
+
+            function atualizarGraficos() {
+                let total = 0;
+                let gasto = 0;
+                let valorTotal = parseFloat(document.getElementById("valor-total").value) || 0;
+
+                tabela.querySelectorAll("tr").forEach(row => {
+                    const cells = row.querySelectorAll("td");
+                    const quantidade = parseFloat(cells[1].querySelector("input").value) || 0;
+                    const preco = parseFloat(cells[2].querySelector("input").value) || 0;
+                    const totalLinha = quantidade * preco;
+                    total += totalLinha;
+                    gasto += totalLinha;
+                });
+
+                const porcentagemGasto = (gasto / valorTotal) * 100;
+                const porcentagemDisponivel = 100 - porcentagemGasto;
+
+                // Atualiza os gráficos
+                chartTotal.data.datasets[0].data = [valorTotal];
+                chartTotal.update();
+
+                if (gasto >= valorTotal) {
+                    chartGasto.data.datasets[0].data = [100, 0];
+                    chartGasto.data.datasets[0].backgroundColor = ["red", "transparent"];
+                } else {
+                    chartGasto.data.datasets[0].data = [porcentagemGasto, porcentagemDisponivel];
+                    chartGasto.data.datasets[0].backgroundColor = ["red", "green"];
+                }
+                chartGasto.update();
+
+                if (gasto >= valorTotal) {
+                    chartDisponivel.data.datasets[0].data = [100, 0];
+                    chartDisponivel.data.datasets[0].backgroundColor = ["yellow", "transparent"];
+                } else {
+                    const porcentagemAmarelo = (gasto / valorTotal) * 100;
+                    const porcentagemCinza = 100 - porcentagemAmarelo;
+                    chartDisponivel.data.datasets[0].data = [porcentagemAmarelo, porcentagemCinza];
+                    chartDisponivel.data.datasets[0].backgroundColor = ["yellow", "gray"];
+                }
+                chartDisponivel.update();
+
+                // Atualiza as displays dos gráficos
+                gastosDisplay.innerText = formatarValor(gasto);
+                saldoDisponivelDisplay.innerText = formatarValor(valorTotal - gasto);
+                valorTotalDisplay.innerText = formatarValor(valorTotal);
+            }
+
+        });
+    </script>
 </body>
 </html>
